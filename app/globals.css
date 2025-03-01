@@ -2,20 +2,94 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* :root {
+  --primary: hsl(205, 60%, 45%);
+  --background: hsl(0, 1%, 26%);
+  --foreground: hsl(0, 0%, 93%);
+  --bg-primary: hsl(0, 1%, 15%); 
+  --primary-foreground: hsl(0, 91%, 9%);
+
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --primary: hsla(205, 60%, 45%, 0.942);
+    --background: hsl(0, 1%, 26%);
+    --foreground: hsl(0, 0%, 93%);
+    --bg-primary: hsl(0, 1%, 15%); 
+    --bg-foreground: 0, 0%, 93%;
+
+  }
+} */
+ :root {
+  --primary: hsl(255, 40%, 52%);
+  --background: hsl(0, 1%, 26%);
+  --foreground: hsl(0, 0%, 93%);
+  --bg-primary: hsl(0, 1%, 15%); 
+  --primary-foreground: hsl(0, 91%, 9%);
+
+  /* ADD THESE */
+  --card: 0, 0%, 90%;
+  --card-foreground: 0, 0%, 15%;
+  --popover: 0, 0%, 95%;
+  --popover-foreground: 0, 0%, 20%;
+  --secondary: 210, 20%, 40%;
+  --secondary-foreground: 210, 15%, 85%;
+  --muted: 220, 14%, 28%;
+  --muted-foreground: 220, 10%, 80%;
+  --accent: 210, 50%, 50%;
+  --accent-foreground: 210, 30%, 90%;
+  --destructive: 0, 80%, 60%;
+  --destructive-foreground: 0, 90%, 15%;
+  --border: 210, 15%, 30%;
+  --input: 210, 20%, 35%;
+  --ring: 205, 70%, 45%;
+  --chart-1: 205, 65%, 50%;
+  --chart-2: 40, 90%, 55%;
+  --chart-3: 150, 60%, 45%;
+  --chart-4: 280, 75%, 50%;
+  --chart-5: 330, 70%, 50%;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary: hsl(255, 40%, 52%);
+    --background: hsl(0, 1%, 26%);
+    --foreground: hsl(0, 0%, 93%);
+    --bg-primary: hsl(0, 1%, 15%); 
+    --primary-foreground: hsl(0, 8%, 80%);
+
+    /* DEFINE DARK MODE VARIABLES */
+    --card: 0, 0%, 15%;
+    --card-foreground: 0, 0%, 90%;
+    --popover: 0, 0%, 20%;
+    --popover-foreground: 0, 0%, 95%;
+    --secondary: 210, 20%, 30%;
+    --secondary-foreground: 210, 15%, 80%;
+    --muted: 220, 14%, 18%;
+    --muted-foreground: 220, 10%, 70%;
+    --accent: 210, 50%, 40%;
+    --accent-foreground: 210, 30%, 80%;
+    --destructive: 0, 80%, 50%;
+    --destructive-foreground: 0, 90%, 10%;
+    --border: 210, 15%, 20%;
+    --input: 210, 20%, 25%;
+    --ring: 205, 70%, 35%;
+    --chart-1: 205, 65%, 40%;
+    --chart-2: 40, 90%, 45%;
+    --chart-3: 150, 60%, 35%;
+    --chart-4: 280, 75%, 40%;
+    --chart-5: 330, 70%, 40%;
   }
 }
+
 
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+ @apply font-serif;
 }
+/* body {
+  @apply bg-background text-foreground bg-gray-800 text-white font-serif;
+} */
