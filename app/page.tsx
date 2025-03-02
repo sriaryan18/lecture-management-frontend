@@ -1,11 +1,38 @@
 "use client";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import SignUpForm from "@/components/Forms/Signup";
 import { Button } from "@/components/ui/button";
+import { useApi } from "@/hooks/useApi";
 
 export default function Home() {
   const [isSignUpMode, setIsSignUpMode] = useState(true);
+  const [payload, setPayload] = useState();
+
+  const endpoint = useMemo(() => {
+    if (isSignUpMode) {
+      return "/auth/api/v1/signup";
+    }
+    return "/auth/api/v1/signin";
+  }, [isSignUpMode]);
+
+  
+
+  const { data, error, status, request } = useApi({
+    endpoint: endpoint,
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: "test",
+    },
+    lazy: false,
+    dependencies: [isSignUpMode],
+    
+  });
+
+  const handleClick = (data: unknown) => {
+    request();
+  };
 
   return (
     <div className="flex min-h-[98vh] m-2">
@@ -21,7 +48,7 @@ export default function Home() {
 
       <div className="flex flex-col items-center justify-center basis-1/2 p-10 gap-12">
         <HeaderSection isSignUpMode={isSignUpMode} onToggle={setIsSignUpMode} />
-        <SignUpForm isSignUp={isSignUpMode} />
+        <SignUpForm isSignUp={isSignUpMode} onClick={handleClick} />
       </div>
     </div>
   );

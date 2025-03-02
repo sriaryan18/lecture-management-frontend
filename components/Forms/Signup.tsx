@@ -1,7 +1,12 @@
 import { BaseInput } from "@/components/BaseComponents/Input";
 import { Button } from "@/components/ui/button";
 
-export default function SignUpForm({ ...props }: { isSignUp: boolean }) {
+export default function SignUpForm({
+  ...props
+}: {
+  isSignUp: boolean;
+  onClick: (mode: "signup" | "signin") => void;
+}) {
   const MyStyledBaseInput = ({ ...props }) => (
     <BaseInput {...props} className="h-12 " />
   );
