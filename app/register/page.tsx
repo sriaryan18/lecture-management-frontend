@@ -1,11 +1,11 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import SignUpForm from "@/components/Forms/Signup";
 import { Button } from "@/components/ui/button";
 import { useApi } from "@/hooks/useApi";
 
-export default function Home() {
+export default function Register() {
   const [isSignUpMode, setIsSignUpMode] = useState(true);
   const [payload, setPayload] = useState();
 
@@ -16,26 +16,28 @@ export default function Home() {
     return "/auth/api/v1/signin";
   }, [isSignUpMode]);
 
-  
-
-  const { data, error, status, request } = useApi({
+  const { request } = useApi({
     endpoint: endpoint,
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       authorization: "test",
     },
-    lazy: false,
-    dependencies: [isSignUpMode],
-    
+    body: payload,
+    lazy: true,
   });
 
-  const handleClick = (data: unknown) => {
-    request();
+  const handleClick = (_data: unknown) => {
+    setPayload(_data);
   };
+  useEffect(() => {
+    if (payload) {
+      request();
+    }
+  }, [payload, request]);
 
   return (
-    <div className="flex min-h-[98vh] m-2">
+    <div className="flex min-h-[98vh] m-2 ">
       <div className="basis-1/2">
         <Image
           src="/login-page-wallpaper.jpeg"
@@ -46,9 +48,16 @@ export default function Home() {
         />
       </div>
 
-      <div className="flex flex-col items-center justify-center basis-1/2 p-10 gap-12">
-        <HeaderSection isSignUpMode={isSignUpMode} onToggle={setIsSignUpMode} />
-        <SignUpForm isSignUp={isSignUpMode} onClick={handleClick} />
+      <div className="flex flex-col items-center justify-center basis-1/2 p-10 gap-12 ">
+        <div className="w-1/2">
+          <HeaderSection
+            isSignUpMode={isSignUpMode}
+            onToggle={setIsSignUpMode}
+          />
+        </div>
+        <div className="w-1/2 ">
+          <SignUpForm isSignUp={isSignUpMode} onClick={handleClick} />
+        </div>
       </div>
     </div>
   );
@@ -63,8 +72,8 @@ function HeaderSection({
   onToggle: (value: boolean) => void;
 }) {
   return (
-    <div className="space-y-8 ">
-      <h1 className="text-4xl font-bold">
+    <div className="space-y-4  ">
+      <h1 className="text-3xl font-bold">
         {isSignUpMode ? "Create an account" : "Sign in to your account"}
       </h1>
       <AuthToggle isSignUpMode={isSignUpMode} onToggle={onToggle} />
