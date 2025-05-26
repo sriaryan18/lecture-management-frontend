@@ -2,39 +2,54 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import SignUpForm from "@/components/Forms/Signup";
+import { useMutation } from "@tanstack/react-query";
+import axiosClient from "@/lib/axiosClient";
 import { Button } from "@/components/ui/button";
-import { useApi } from "@/hooks/useApi";
+import { setAuth } from "@/store/slices/authSlice";
+
+export type AuthPayload = {
+  firstName?: string;
+  lastName?: string;
+  username: string;
+  password: string;
+};
 
 export default function Register() {
   const [isSignUpMode, setIsSignUpMode] = useState(true);
-  const [payload, setPayload] = useState();
 
   const endpoint = useMemo(() => {
     if (isSignUpMode) {
       return "/auth/api/v1/signup";
     }
-    return "/auth/api/v1/signin";
+    return "/auth/api/v1/login";
   }, [isSignUpMode]);
 
-  const { request } = useApi({
-    endpoint: endpoint,
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      authorization: "test",
+  const {
+    mutate,
+    isPending,
+    error,
+    data: response,
+  } = useMutation({
+    mutationFn: async (payload: AuthPayload) => {
+      const { data } = await axiosClient.post(endpoint, payload);
+      return data;
     },
-    body: payload,
-    lazy: true,
   });
 
-  const handleClick = (_data: unknown) => {
-    setPayload(_data);
+  const handleClick = (data: AuthPayload) => {
+    mutate(data);
   };
+
   useEffect(() => {
-    if (payload) {
-      request();
+    if (response) {
+      console.log(response);
+      setAuth({
+        user: response.user ?? {},
+        accessToken: response.accessToken,
+        refreshToken: response.refreshToken,
+      });
     }
-  }, [payload, request]);
+  }, [response]);
 
   return (
     <div className="flex min-h-[98vh] m-2 ">

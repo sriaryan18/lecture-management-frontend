@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
+// DEPRECATED: Use axiosClient instead
 interface ApiRequest {
   endpoint: string;
   method: "GET" | "POST" | "PUT" | "DELETE";
@@ -53,7 +54,7 @@ export const useApi = ({
     try {
       setStatus("pending");
       const completeUrl = new URL("http://localhost:8081" + endpoint);
-      const response = await fetch(completeUrl,config);
+      const response = await fetch(completeUrl, config);
       const responseData = await response.json();
 
       if (response.ok) {

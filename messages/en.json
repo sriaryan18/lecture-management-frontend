@@ -1,0 +1,12 @@
+{
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "emailOrUsername": "Email or Username",
+  "password": "Password",
+  "firstNameRequired": "First Name is required",
+  "lastNameRequired": "Last Name is required",
+  "invalidEmail": "Invalid email address",
+  "passwordMin": "Password must be at least 6 characters long",
+  "signUp": "Sign Up",
+  "signIn": "Sign In"
+} 

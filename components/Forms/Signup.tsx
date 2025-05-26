@@ -5,18 +5,19 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
+import type { AuthPayload } from "@/app/register/page";
 
 export default function SignUpForm({
   isSignUp,
   onClick,
-}: {
+}: Readonly<{
   isSignUp: boolean;
-  onClick: (mode: "signup" | "signin") => void;
-}) {
+  onClick: (data: AuthPayload) => void;
+}>) {
   const signUpFormSchema = z.object({
     firstName: z.string().min(1, "First Name is required"),
     lastName: z.string().min(1, "Last Name is required"),
-    emailOrUsername: z.string().email("Invalid email address"),
+    username: z.string().min(1, "Username is required"),
     password: z.string().min(6, "Password must be at least 6 characters long"),
   });
 
@@ -25,7 +26,7 @@ export default function SignUpForm({
     defaultValues: {
       firstName: "",
       lastName: "",
-      emailOrUsername: "",
+      username: "",
       password: "",
     },
   });
@@ -46,6 +47,7 @@ export default function SignUpForm({
               placeholder="First Name"
               {...form.register("firstName")}
               className="h-12 w-full"
+              error={form.formState.errors.firstName?.message}
             />
             <BaseInput
               label="Last Name"
@@ -53,16 +55,18 @@ export default function SignUpForm({
               placeholder="Last Name"
               {...form.register("lastName")}
               className="h-12 w-full"
+              error={form.formState.errors.lastName?.message}
             />
           </div>
         )}
 
         <BaseInput
-          label="Email Or Username"
-          type="email"
-          placeholder="Email Or Username"
-          {...form.register("emailOrUsername")}
+          label="Username"
+          type="text"
+          placeholder="Username"
+          {...form.register("username")}
           className="w-full h-12"
+          error={form.formState.errors.username?.message}
         />
         <BaseInput
           label="Password"
@@ -70,6 +74,7 @@ export default function SignUpForm({
           placeholder="Password"
           {...form.register("password")}
           className="w-full h-12"
+          error={form.formState.errors.password?.message}
         />
 
         <Button
