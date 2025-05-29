@@ -7,6 +7,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { NextIntlClientProvider } from "next-intl";
 import { Provider } from "react-redux";
 import { store } from "@/store";
+import { Toaster } from "@/components/ui/toaster";
 
 // import { getMessages } from "next-intl/server";
 // import { useTranslations } from "next-intl";
@@ -45,7 +46,7 @@ export default function RootLayout({
             {process.env.NODE_ENV === "development" && (
               <ReactQueryDevtools initialIsOpen={false} />
             )}
-
+            <Toaster/>
             {children}
           </QueryClientProvider>
         </Provider>

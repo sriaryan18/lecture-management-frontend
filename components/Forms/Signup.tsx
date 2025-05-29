@@ -5,14 +5,18 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
-import type { AuthPayload } from "@/app/register/page";
+import type { AuthPayload } from "@/app/page";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 
 export default function SignUpForm({
   isSignUp,
   onClick,
+  isLoading,
 }: Readonly<{
   isSignUp: boolean;
   onClick: (data: AuthPayload) => void;
+  isLoading: boolean;
 }>) {
   const signUpFormSchema = z.object({
     firstName: z.string().min(1, "First Name is required"),
@@ -21,8 +25,14 @@ export default function SignUpForm({
     password: z.string().min(6, "Password must be at least 6 characters long"),
   });
 
-  const form = useForm<z.infer<typeof signUpFormSchema>>({
-    resolver: zodResolver(signUpFormSchema),
+  const signInFormSchema = z.object({
+    username: z.string().min(1, "Username is required"),
+    password: z.string().min(6, "Password must be at least 6 characters long"),
+  });
+
+
+  const form = useForm<z.infer<typeof signUpFormSchema | typeof signInFormSchema>>({
+    resolver: zodResolver(isSignUp ? signUpFormSchema : signInFormSchema),
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -31,14 +41,16 @@ export default function SignUpForm({
     },
   });
 
-  const onSubmit = (data: z.infer<typeof signUpFormSchema>) => {
+
+  const onSubmit = (data: z.infer<typeof signUpFormSchema | typeof signInFormSchema >) => {
     console.log("Submitted Data:", data);
     onClick(data);
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+   
+      <form onSubmit={form.handleSubmit(onSubmit)}  className="space-y-6">
         {isSignUp && (
           <div className="grid grid-cols-2 gap-4">
             <BaseInput
@@ -49,6 +61,7 @@ export default function SignUpForm({
               className="h-12 w-full"
               error={form.formState.errors.firstName?.message}
             />
+      
             <BaseInput
               label="Last Name"
               type="text"
@@ -80,8 +93,9 @@ export default function SignUpForm({
         <Button
           type="submit"
           className="w-full h-12 font-semibold text-md rounded-xl"
+          isLoading={isLoading}
         >
-          {isSignUp ? "Sign Up" : "Sign In"}
+          {!isLoading && isSignUp ? "Sign Up" : "Sign In"}
         </Button>
       </form>
     </Form>

@@ -3,9 +3,13 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import SignUpForm from "@/components/Forms/Signup";
 import { useMutation } from "@tanstack/react-query";
-import axiosClient from "@/lib/axiosClient";
+import axiosClient, { getBaseURL } from "@/lib/axiosClient";
 import { Button } from "@/components/ui/button";
 import { setAuth } from "@/store/slices/authSlice";
+import { useToast } from "@/hooks/use-toast";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export type AuthPayload = {
   firstName?: string;
@@ -15,9 +19,11 @@ export type AuthPayload = {
 };
 
 export default function Register() {
-  const [isSignUpMode, setIsSignUpMode] = useState(true);
-
-  const endpoint = useMemo(() => {
+  const [isSignUpMode, setIsSignUpMode] = useState(false);
+  const { toast } = useToast()
+  const dispatch = useDispatch()
+  const router = useRouter()
+    const endpoint = useMemo(() => {
     if (isSignUpMode) {
       return "/auth/api/v1/signup";
     }
@@ -29,27 +35,38 @@ export default function Register() {
     isPending,
     error,
     data: response,
+
+
   } = useMutation({
     mutationFn: async (payload: AuthPayload) => {
-      const { data } = await axiosClient.post(endpoint, payload);
+      const { data } = await axios.post(endpoint, payload, { withCredentials: true, baseURL: getBaseURL() })
       return data;
     },
   });
 
   const handleClick = (data: AuthPayload) => {
     mutate(data);
+
   };
 
   useEffect(() => {
-    if (response) {
+    if (response && !error) {
       console.log(response);
-      setAuth({
+      dispatch(setAuth({
         user: response.user ?? {},
         accessToken: response.accessToken,
         refreshToken: response.refreshToken,
+      }));
+      router.push("/home",{ scroll: false,  });
+    }
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
       });
     }
-  }, [response]);
+  }, [response, error, dispatch, toast, router]);
 
   return (
     <div className="flex min-h-[98vh] m-2 ">
@@ -71,7 +88,7 @@ export default function Register() {
           />
         </div>
         <div className="w-1/2 ">
-          <SignUpForm isSignUp={isSignUpMode} onClick={handleClick} />
+          <SignUpForm isSignUp={isSignUpMode} onClick={handleClick} isLoading={isPending} />
         </div>
       </div>
     </div>
