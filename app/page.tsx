@@ -11,6 +11,8 @@ import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
+
+
 export type AuthPayload = {
   firstName?: string;
   lastName?: string;
@@ -19,6 +21,10 @@ export type AuthPayload = {
 };
 
 export default function Register() {
+
+
+
+
   const [isSignUpMode, setIsSignUpMode] = useState(false);
   const { toast } = useToast()
   const dispatch = useDispatch()
@@ -67,6 +73,7 @@ export default function Register() {
       });
     }
   }, [response, error, dispatch, toast, router]);
+
 
   return (
     <div className="flex min-h-[98vh] m-2 ">

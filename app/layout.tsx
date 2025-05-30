@@ -4,13 +4,17 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { NextIntlClientProvider } from "next-intl";
+// import { NextIntlClientProvider } from "next-intl";
 import { Provider } from "react-redux";
 import { store } from "@/store";
 import { Toaster } from "@/components/ui/toaster";
+import client from "@/lib/graphql-client";
+import { ApolloProvider } from "@apollo/client";
 
 // import { getMessages } from "next-intl/server";
 // import { useTranslations } from "next-intl";
+
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,11 +47,13 @@ export default function RootLayout({
       >
         <Provider store={store}>
           <QueryClientProvider client={queryClient}>
+            <ApolloProvider client={client}>
             {process.env.NODE_ENV === "development" && (
               <ReactQueryDevtools initialIsOpen={false} />
             )}
-            <Toaster/>
-            {children}
+              <Toaster/>
+              {children}
+            </ApolloProvider>
           </QueryClientProvider>
         </Provider>
       </body>
