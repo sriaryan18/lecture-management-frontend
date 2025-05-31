@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Sidebar,
   SidebarContent,
@@ -10,7 +10,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarRail,
-} from "@/components/ui/sidebar";
+} from '@/components/ui/sidebar';
 
 export default function ClassroomsLectures({
   classRoomsAndLectures,
@@ -19,16 +19,16 @@ export default function ClassroomsLectures({
   const data = {
     navMain: [
       {
-        title: "Class 1",
-        url: "#",
+        title: 'Class 1',
+        url: '#',
         items: [
           {
-            title: "Lecture 1",
-            url: "test",
+            title: 'Lecture 1',
+            url: 'test',
           },
           {
-            title: "Lecture 2",
-            url: "#",
+            title: 'Lecture 2',
+            url: '#',
           },
         ],
       },
@@ -44,26 +44,29 @@ export default function ClassroomsLectures({
   );
 
   const MenuItemSub = ({ item }: { item: any }) => {
-    console.log(item)
-    return  <SidebarMenuSubItem key={Math.random()}>
-    <SidebarMenuSubButton asChild isActive={true}>
-      <p className="text-sm text-gray-500 text-ellipsis text-nowrap hover:bg-gray-400 hover:cursor-pointer">{item}</p>
-    </SidebarMenuSubButton>
-  </SidebarMenuSubItem>
-  }
+    console.log(item);
+    return (
+      <SidebarMenuSubItem key={Math.random()}>
+        <SidebarMenuSubButton asChild isActive={true}>
+          <p className="text-sm text-gray-500 text-ellipsis text-nowrap hover:bg-gray-400 hover:cursor-pointer">
+            {item}
+          </p>
+        </SidebarMenuSubButton>
+      </SidebarMenuSubItem>
+    );
+  };
 
   return (
     <Sidebar {...props} className="bg-green-500  top-14 left-0 w-64">
       <SidebarContent>
         <SidebarGroup className="mt-2 font-bold">
           <SidebarMenu>
-      
             {classRoomsAndLectures.map((item) => (
               <SidebarMenuItem key={item.id}>
                 <SidebarMenuButton asChild>
                   <MenuItem item={item} />
                 </SidebarMenuButton>
-                <SidebarMenuSub >
+                <SidebarMenuSub>
                   {item.lectures.map((lecture) => (
                     <MenuItemSub key={Math.random()} item={lecture.id} />
                   ))}
