@@ -3,14 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import SignUpForm from "@/components/Forms/Signup";
 import { useMutation } from "@tanstack/react-query";
-import axiosClient, { getBaseURL } from "@/lib/axiosClient";
+import axiosClient from "@/lib/axiosClient";
 import { Button } from "@/components/ui/button";
-import { setAuth } from "@/store/slices/authSlice";
 import { useToast } from "@/hooks/use-toast";
-import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
-import axios from "axios";
-
+import { useAuth } from "@/hooks/store/useAuth";
 
 
 export type AuthPayload = {
@@ -21,15 +18,11 @@ export type AuthPayload = {
 };
 
 export default function Register() {
-
-
-
-
   const [isSignUpMode, setIsSignUpMode] = useState(false);
-  const { toast } = useToast()
-  const dispatch = useDispatch()
-  const router = useRouter()
-    const endpoint = useMemo(() => {
+  const { toast } = useToast();
+  const router = useRouter();
+  const { setAuthInfo } = useAuth();
+  const endpoint = useMemo(() => {
     if (isSignUpMode) {
       return "/auth/api/v1/signup";
     }
@@ -41,29 +34,27 @@ export default function Register() {
     isPending,
     error,
     data: response,
-
-
   } = useMutation({
     mutationFn: async (payload: AuthPayload) => {
-      const { data } = await axios.post(endpoint, payload, { withCredentials: true, baseURL: getBaseURL() })
+      const { data } = await axiosClient.post(endpoint, payload);
       return data;
     },
   });
 
   const handleClick = (data: AuthPayload) => {
     mutate(data);
-
   };
 
   useEffect(() => {
     if (response && !error) {
       console.log(response);
-      dispatch(setAuth({
-        user: response.user ?? {},
-        accessToken: response.accessToken,
-        refreshToken: response.refreshToken,
-      }));
-      router.push("/home",{ scroll: false,  });
+      setAuthInfo(
+        response.user?.user ?? {},
+        response.accessToken,
+        response.refreshToken
+      );
+
+      router.push("/home", { scroll: false });
     }
     if (error) {
       toast({
@@ -72,8 +63,7 @@ export default function Register() {
         variant: "destructive",
       });
     }
-  }, [response, error, dispatch, toast, router]);
-
+  }, [response, error, toast, router, setAuthInfo]);
 
   return (
     <div className="flex min-h-[98vh] m-2 ">
@@ -95,7 +85,11 @@ export default function Register() {
           />
         </div>
         <div className="w-1/2 ">
-          <SignUpForm isSignUp={isSignUpMode} onClick={handleClick} isLoading={isPending} />
+          <SignUpForm
+            isSignUp={isSignUpMode}
+            onClick={handleClick}
+            isLoading={isPending}
+          />
         </div>
       </div>
     </div>

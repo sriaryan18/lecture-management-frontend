@@ -1,7 +1,6 @@
 import axios from "axios";
 
 export const getBaseURL = () => {
-  console.log(process.env.NEXT_PUBLIC_API_BASE_URL);
   return process.env.NEXT_PUBLIC_API_BASE_URL;
 };
 
@@ -10,7 +9,7 @@ const axiosClient = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-
+  withCredentials: true,
 });
 
 export default axiosClient;
