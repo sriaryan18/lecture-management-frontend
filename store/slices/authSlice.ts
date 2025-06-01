@@ -9,6 +9,7 @@ export interface AuthState {
     id: string;
     paymentStatus: string;
     customerType: string;
+    username: string;
   };
   accessToken: string | null;
   refreshToken: string | null;

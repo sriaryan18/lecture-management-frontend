@@ -48,9 +48,9 @@ export default function RootLayout({
           <PersistGate loading={null} persistor={persistor}>
             <QueryClientProvider client={queryClient}>
               <ApolloProvider client={client}>
-                {process.env.NODE_ENV === "development" && (
+                {/* {process.env.NODE_ENV === "development" && (
                   <ReactQueryDevtools initialIsOpen={false} />
-                )}
+                )} */}
                 <Toaster />
                 {children}
               </ApolloProvider>
