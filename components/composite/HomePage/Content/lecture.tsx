@@ -1,12 +1,12 @@
 'use client';
 
 import { GET_LECTURE_BY_ID } from '@/garphql/queries/students/lectures';
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { useParams } from 'next/navigation';
 import Pending from '@/app/home/classroom/[classroomId]/lecture/[lectureId]/pending';
 import Error from '@/app/home/classroom/[classroomId]/lecture/[lectureId]/error';
 import InfoCard from './info-card';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Notes from './notes';
 import { useAuth } from '@/hooks/store/useAuth';
 
@@ -17,23 +17,77 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { PanelBottomOpen } from 'lucide-react';
+import { Edit, Edit2, PanelBottomOpen } from 'lucide-react';
+import {
+  GET_NOTES_BY_STUDENT_ID_LECTURE_ID_CLASSROOM_ID,
+  GET_STUDENT_NOTES,
+  UPDATE_STUDENT_NOTES,
+} from '@/garphql/queries/students/notes';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { toast } from '@/hooks/use-toast';
 
 export type Section = 'info' | 'notes' | 'tests';
 
 export default function Lecture() {
-  const { lectureId } = useParams();
+  const { lectureId, classroomId } = useParams();
 
   const [section, setSection] = useState<Section>('info');
+  const [showMyNotes, setShowMyNotes] = useState(false);
+  const [myNotes, setMyNotes] = useState('');
 
+  const { user } = useAuth();
+  const customerType = user?.customerType ?? 'student';
   const { data, loading, error } = useQuery(GET_LECTURE_BY_ID, {
     variables: {
       lectureId: lectureId,
     },
   });
-  const { user } = useAuth();
 
-  const customerType = user?.customerType ?? 'student';
+  const { data: notesData } = useQuery(GET_STUDENT_NOTES, {
+    variables: {
+      studentId: user?.id,
+      lectureId: lectureId,
+      classroomId: classroomId,
+    },
+  });
+
+  const [saveNotes, { loading: saveNotesLoading }] = useMutation(UPDATE_STUDENT_NOTES, {
+    variables: {
+      studentId: user?.id,
+      lectureId: lectureId,
+      classroomId: classroomId,
+      notes: myNotes,
+    },
+    onCompleted: () => {
+      toast({
+        title: 'Notes saved successfully',
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: 'Failed to save notes',
+        description: error.message,
+      });
+    },
+  });
+  // If showMyNotes is true, show the notes of the student
+  // If showMyNotes is false, show the notes of the instructor
+  const notesToShow = useMemo(() => {
+    if (showMyNotes) {
+      return notesData?.getStudentNotes?.notes ?? '';
+    }
+    return data?.getLectureById?.notes ?? '';
+  }, [showMyNotes, notesData, data?.getLectureById.notes]);
+
+  const isNotesEditable = useMemo(() => {
+    return showMyNotes && customerType === 'student';
+  }, [showMyNotes, customerType]);
+
+  useEffect(() => {
+    setMyNotes(notesData?.getStudentNotes?.notes ?? '');
+  }, [notesData]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -64,9 +118,13 @@ export default function Lecture() {
         );
       case 'notes':
         return (
-          <Notes
-            initialValue={data?.getLectureById.notes}
-            isEditable={customerType !== 'student'}
+          <NotesWithWrapper
+            notes={notesToShow}
+            isEditable={isNotesEditable}
+            toggleNotesContent={() => setShowMyNotes(!showMyNotes)}
+            saveNotes={saveNotes}
+            isLoading={saveNotesLoading}
+            onChange={(notes) => setMyNotes(notes)}
           />
         );
       case 'tests':
@@ -127,3 +185,42 @@ const SectionSelectorButton = () => (
     </AvatarFallback>
   </Avatar>
 );
+
+const NotesWithWrapper = ({
+  notes,
+  isEditable,
+  toggleNotesContent,
+  saveNotes,
+  isLoading,
+  onChange,
+}: {
+  notes: string;
+  isEditable: boolean;
+  toggleNotesContent: () => void;
+  saveNotes: () => void;
+  isLoading: boolean;
+  onChange: (notes: string) => void;
+}) => {
+  return (
+    <div className="flex flex-col gap-4 w-full flex-grow">
+      <div className="flex flex-row gap-2 items-center justify-center self-end mr-4">
+        <Switch checked={isEditable} onCheckedChange={toggleNotesContent} className="bg-blue-500" />
+        <Label className="flex flex-row gap-2 items-center justify-center">My Notes</Label>
+        <Button
+          className="bg-green-500 text-white hover:bg-green-600"
+          variant="secondary"
+          size="sm"
+          disabled={!isEditable}
+          isLoading={isLoading}
+          onClick={saveNotes}
+        >
+          Save
+        </Button>
+      </div>
+      <div className="flex flex-col gap-4 w-full flex-grow">
+        {isEditable && <Notes initialValue={notes} isEditable={isEditable} onChange={onChange} />}
+        {!isEditable && <Notes initialValue={notes} isEditable={isEditable} />}
+      </div>
+    </div>
+  );
+};
