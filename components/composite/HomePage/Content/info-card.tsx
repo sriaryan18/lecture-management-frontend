@@ -2,8 +2,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { getInitials } from '@/utils/labels';
-import Link from 'next/link';
+import { getInitials } from '@/utils/labels';import Link from 'next/link';
 import { Section } from './lecture';
 
 export default function InfoCard({
@@ -20,7 +19,7 @@ export default function InfoCard({
   const instructorName = 'John Doe';
 
   return (
-    <div className="flex flex-col gap-4 w-[90%] lg:w-1/3">
+    <div className="flex flex-col gap-4 w-[90%] lg:w-1/2">
       <Card className="bg-gray-800 ">
         <CardHeader className="flex flex-row gap-2 items-center justify-center">
           <CardHeaderContent title="Lecture Summary" />

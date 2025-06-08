@@ -8,5 +8,6 @@
   "invalidEmail": "Invalid email address",
   "passwordMin": "Password must be at least 6 characters long",
   "signUp": "Sign Up",
-  "signIn": "Sign In"
+  "signIn": "Sign In",
+  "error": "Error"
 } 

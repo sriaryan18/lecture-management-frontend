@@ -1,6 +1,6 @@
 'use client';
 
-import { GET_LECTURE_BY_ID } from '@/garphql/queries/students/lectures';
+import { GET_LECTURE_BY_ID } from '@/garphql/students/queries/lectures';
 import { useMutation, useQuery } from '@apollo/client';
 import { useParams } from 'next/navigation';
 import Pending from '@/app/home/classroom/[classroomId]/lecture/[lectureId]/pending';
@@ -17,16 +17,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Edit, Edit2, PanelBottomOpen } from 'lucide-react';
-import {
-  GET_NOTES_BY_STUDENT_ID_LECTURE_ID_CLASSROOM_ID,
-  GET_STUDENT_NOTES,
-  UPDATE_STUDENT_NOTES,
-} from '@/garphql/queries/students/notes';
+import { PanelBottomOpen } from 'lucide-react';
+import { GET_STUDENT_NOTES } from '@/garphql/students/queries/notes';
+import { UPDATE_STUDENT_NOTES } from '@/garphql/students/mutation/notes';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 export type Section = 'info' | 'notes' | 'tests';
 
@@ -61,15 +58,10 @@ export default function Lecture() {
       notes: myNotes,
     },
     onCompleted: () => {
-      toast({
-        title: 'Notes saved successfully',
-      });
+      toast.success('Notes saved successfully');
     },
-    onError: (error) => {
-      toast({
-        title: 'Failed to save notes',
-        description: error.message,
-      });
+    onError: () => {
+      toast.error('Failed to save notes');
     },
   });
   // If showMyNotes is true, show the notes of the student
