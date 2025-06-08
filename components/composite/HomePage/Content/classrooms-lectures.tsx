@@ -51,18 +51,18 @@ export default function ClassroomsLectures({ ...props }: React.ComponentProps<ty
   };
   return (
     <>
-      <Sidebar {...props} className="top-14 left-0 w-64 overflow-y-auto h-full mt-4 text-wrap">
-        <SidebarContent>
+      <Sidebar {...props} className="top-14 left-0 w-64 overflow-y-auto h-full  text-wrap">
+        <SidebarContent className="overflow-y-auto">
           <SidebarMenuButton
             asChild
-            className="mt-2 bg-white text-center text-black hover:bg-gray-400 hover:cursor-pointer justify-center"
+            className="mt-2  bg-white text-center text-black hover:bg-gray-400 hover:cursor-pointer justify-center"
           >
             <Link href="/home">
               <HomeIcon className="w-4 h-4" /> <span className="">Home</span>
             </Link>
           </SidebarMenuButton>
 
-          <SidebarGroup className="mt-2 font-bold h-full overflow-y-auto  mb-20">
+          <SidebarGroup className="mt-2 font-bold h-full overflow-y-auto   ">
             <SidebarMenu>
               {classRoomsAndLectures?.map((classroom) => (
                 <SidebarMenuItem key={classroom.id}>
@@ -84,7 +84,6 @@ export default function ClassroomsLectures({ ...props }: React.ComponentProps<ty
             </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarRail />
       </Sidebar>
     </>
   );

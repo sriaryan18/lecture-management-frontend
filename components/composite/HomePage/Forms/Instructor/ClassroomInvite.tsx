@@ -1,5 +1,5 @@
 import { DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Form, FormField, FormLabel, FormItem, FormMessage } from '@/components/ui/form';
+import { Form, FormField } from '@/components/ui/form';
 import { shareClassroomInviteSchema } from '@/models/share-classroom-invite';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -7,7 +7,6 @@ import { useForm } from 'react-hook-form';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
 import { SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { BaseInput } from '@/components/BaseComponents/Input';
 import { Button } from '@/components/ui/button';
 
 export default function LectureInvite({
@@ -46,7 +45,7 @@ const LectureInviteForm = ({
     resolver: zodResolver(shareClassroomInviteSchema),
     defaultValues: {
       classroomId,
-      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24).toString(),
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 2).toISOString(),
     },
   });
   return (
@@ -73,22 +72,6 @@ const LectureInviteForm = ({
                   </SelectContent>
                 )}
               </Select>
-            </div>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="expiresAt"
-          render={({ field }) => (
-            <div className="w-full flex flex-col gap-2 ">
-              <BaseInput
-                placeholder="Expires At"
-                label="Expires At "
-                type="text"
-                disabled
-                {...field}
-                error={form.formState.errors.expiresAt?.message}
-              />
             </div>
           )}
         />

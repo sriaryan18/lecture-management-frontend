@@ -21,3 +21,12 @@ export const CREATE_CLASSROOM_MUTATION = gql`
     }
   }
 `;
+
+export const CREATE_INVITE_LINK_MUTATION = gql`
+  mutation createInviteLink($classroomId: String!, $expiry: String!) {
+    createInviteLink(classroomId: $classroomId, expiry: $expiry) {
+      link
+      expiry
+    }
+  }
+`;
