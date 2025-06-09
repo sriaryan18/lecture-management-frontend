@@ -1,16 +1,17 @@
 import { gql } from '@apollo/client';
 
-
 export const CREATE_CLASSROOM_MUTATION = gql`
   mutation CreateClassroom(
     $description: String!
     $classroomName: String!
     $instructorIds: [String!]!
+    $organizationId: String!
   ) {
     createClassroom(
       description: $description
       classroomName: $classroomName
       instructorIds: $instructorIds
+      organizationId: $organizationId
     ) {
       id
       description
@@ -18,6 +19,7 @@ export const CREATE_CLASSROOM_MUTATION = gql`
       instructorIds
       lectures
       clientType
+      organizationId
     }
   }
 `;

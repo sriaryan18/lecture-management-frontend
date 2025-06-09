@@ -1,6 +1,6 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import { Book, Copy, School, Share } from 'lucide-react';
+import { Book, Copy, Menu, School, Share } from 'lucide-react';
 import z from 'zod';
 import { useMemo, useState } from 'react';
 import AddNewLecture from '../Forms/Instructor/AddNewLecture';
@@ -17,6 +17,10 @@ import { RootState } from '@/store';
 import { useSelector } from 'react-redux';
 import LectureInvite from '../Forms/Instructor/ClassroomInvite';
 import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
+import ToolbarCommons from './ToolbarCommons';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import MoreMenu from '../Forms/Instructor/MoreMenu';
 
 export default function InstructorToolbar() {
   const [isModalOpen, setIsModalOpen] = useState<'lecture' | 'classroom' | 'invite' | null>(null);
@@ -98,14 +102,17 @@ export default function InstructorToolbar() {
       className={`flex flex-row pl-2 shadow-lg  items-center  border-b border-gray-200  justify-between`}
     >
       {currentClassroom ? (
-        <h1 className="text-xl font-semibold">
-          Classroom Name : {currentClassroom?.classroomName}
-        </h1>
+        <ToolbarCommons>
+          <ToolbarCommons.ClassroomInfo
+            className={currentClassroom?.classroomName}
+            classCode={currentClassroom?.classroomCode}
+          />
+        </ToolbarCommons>
       ) : (
         <h1 className="text-xl font-semibold">Home</h1>
       )}
 
-      <div className="flex flex-col justify-center  items-end m-2 ">
+      <div className="flex flex-row gap-2 justify-center  items-end m-2 ">
         <Dialog modal={true} onOpenChange={(open) => !open && setIsModalOpen(null)}>
           <DialogTrigger asChild>
             <div className="flex flex-row gap-2">
@@ -128,7 +135,11 @@ export default function InstructorToolbar() {
                 <Book /> Add Lecture
               </Button>
               {!inviteLink && (
-                <Button onClick={() => setIsModalOpen('invite')} className="bg-blue-500 text-white">
+                <Button
+                  onClick={() => setIsModalOpen('invite')}
+                  className="bg-blue-500 text-white"
+                  disabled={true}
+                >
                   <Share /> Create Classroom Invite
                 </Button>
               )}
@@ -136,6 +147,14 @@ export default function InstructorToolbar() {
           </DialogTrigger>
           {isModalOpen && dialogContent}
         </Dialog>
+        <Popover>
+          <PopoverTrigger>
+            <Button variant="outline">
+              <Menu />
+            </Button>
+          </PopoverTrigger>
+          <MoreMenu />
+        </Popover>
       </div>
     </div>
   );

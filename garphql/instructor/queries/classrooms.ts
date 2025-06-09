@@ -12,6 +12,8 @@ export const GET_ALL_CLASSROOMS_BY_INSTRUCTOR_ID = gql`
       instructorIds
       inviteLink
       inviteLinkExpiry
+      organizationId
+      classroomCode
     }
   }
 `;

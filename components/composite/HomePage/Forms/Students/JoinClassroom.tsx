@@ -13,26 +13,22 @@ export default function JoinClassroom({
 }: Readonly<{
   handleSubmit: (data: string) => void;
 }>) {
-  const [inviteLink, setInviteLink] = useState('');
+  const [classroomCode, setClassroomCode] = useState('');
 
   return (
     <DialogContent className="max-w-md">
       <div className="flex flex-col gap-4">
         <DialogHeader>
           <DialogTitle>Join Classroom</DialogTitle>
-          <DialogDescription>Enter the invite link to join the classroom</DialogDescription>
+          <DialogDescription>Enter the classroom code to join the classroom</DialogDescription>
         </DialogHeader>
         <BaseInput
-          name="inviteLink"
-          value={inviteLink}
-          onChange={(e) => setInviteLink(e.target.value)}
-          placeholder="Enter invite link"
+          name="classroomCode"
+          value={classroomCode}
+          onChange={(e) => setClassroomCode(e.target.value)}
+          placeholder="Enter classroom code"
         />
-        <Button
-          type="submit"
-          className="w-full"
-          onClick={() => handleSubmit(inviteLink)}
-        >
+        <Button type="submit" className="w-full" onClick={() => handleSubmit(classroomCode)}>
           Join Classroom
         </Button>
       </div>

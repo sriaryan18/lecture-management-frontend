@@ -10,6 +10,7 @@ export interface AuthState {
     customerType: string;
     username: string;
     role: 'STUDENT' | 'TEACHER' | 'ADMIN' | 'SUPER_ADMIN';
+    organizationId: string;
   };
   accessToken: string | null;
   refreshToken: string | null;

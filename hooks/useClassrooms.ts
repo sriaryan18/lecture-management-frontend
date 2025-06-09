@@ -15,7 +15,7 @@ import { useEffect, useMemo } from 'react';
 import { setClassroomLectures } from '@/store/slices/classroom-lecture-slice';
 import { RootState } from '@/store';
 import { useParams } from 'next/navigation';
-import { joinClassroomMutation } from '@/garphql/students/mutation/classroom';
+import { JOIN_CLASSROOM_BY_CODE } from '@/garphql/students/mutation/classroom';
 
 export const useClassrooms = (role?: 'STUDENT' | 'TEACHER') => {
   const { user } = useAuth();
@@ -90,6 +90,7 @@ export const useClassrooms = (role?: 'STUDENT' | 'TEACHER') => {
           description: data.description,
           classroomName: data.classroomName,
           instructorIds: [user?.id ?? ''],
+          organizationId: user?.organizationId ?? '',
         },
       });
       refetch();
@@ -118,11 +119,11 @@ export const useClassrooms = (role?: 'STUDENT' | 'TEACHER') => {
     if (currentClassroom) {
       currentClassroom.inviteLink = inviteLinkData.createInviteLink;
     }
-    return inviteLinkData;  
+    return inviteLinkData;
   };
 
   const [joinClassroom, { loading: joinClassroomLoading, error: joinClassroomError }] = useMutation(
-    joinClassroomMutation,
+    JOIN_CLASSROOM_BY_CODE,
     {
       onCompleted: () => {
         toast.success('Classroom joined successfully');
@@ -135,7 +136,11 @@ export const useClassrooms = (role?: 'STUDENT' | 'TEACHER') => {
 
   const handleJoinClassroom = async (inviteLink: string) => {
     await joinClassroom({
-      variables: { inviteLink, studentId: user?.username ?? '' },
+      variables: {
+        classroomCode: inviteLink,
+        studentId: user?.username ?? '',
+        organizationId: user?.organizationId ?? '',
+      },
     });
     refetch();
   };
@@ -144,6 +149,7 @@ export const useClassrooms = (role?: 'STUDENT' | 'TEACHER') => {
     return classroomLectures?.data?.map((classroom: any) => ({
       id: classroom.id,
       name: classroom.classroomName,
+      code: classroom.classroomCode,
     }));
   }, [classroomLectures]);
 

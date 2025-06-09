@@ -50,41 +50,39 @@ export default function ClassroomsLectures({ ...props }: React.ComponentProps<ty
     );
   };
   return (
-    <>
-      <Sidebar {...props} className="top-14 left-0 w-64 overflow-y-auto h-full  text-wrap">
-        <SidebarContent className="overflow-y-auto">
-          <SidebarMenuButton
-            asChild
-            className="mt-2  bg-white text-center text-black hover:bg-gray-400 hover:cursor-pointer justify-center"
-          >
-            <Link href="/home">
-              <HomeIcon className="w-4 h-4" /> <span className="">Home</span>
-            </Link>
-          </SidebarMenuButton>
+    <Sidebar {...props} className="top-14 left-0 w-64 overflow-y-auto h-full  text-wrap">
+      <SidebarContent className="overflow-y-auto">
+        <SidebarMenuButton
+          asChild
+          className="mt-2  bg-white text-center text-black hover:bg-gray-400 hover:cursor-pointer justify-center"
+        >
+          <Link href="/home">
+            <HomeIcon className="w-4 h-4" /> <span className="">Home</span>
+          </Link>
+        </SidebarMenuButton>
 
-          <SidebarGroup className="mt-2 font-bold h-full overflow-y-auto   ">
-            <SidebarMenu>
-              {classRoomsAndLectures?.map((classroom) => (
-                <SidebarMenuItem key={classroom.id}>
-                  <SidebarMenuButton asChild className="text-wrap text-ellipsis">
-                    <MenuItem item={classroom} />
-                  </SidebarMenuButton>
-                  <SidebarMenuSub>
-                    {classroom.lectures?.map((lecture, index) => (
-                      <Link
-                        key={index}
-                        href={`/home/classroom/${classroom.id}/lecture/${lecture.id}`}
-                      >
-                        <MenuItemSub key={index} item={lecture} />
-                      </Link>
-                    ))}
-                  </SidebarMenuSub>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroup>
-        </SidebarContent>
-      </Sidebar>
-    </>
+        <SidebarGroup className="mt-2 font-bold h-full overflow-y-auto   ">
+          <SidebarMenu>
+            {classRoomsAndLectures?.map((classroom) => (
+              <SidebarMenuItem key={classroom.id}>
+                <SidebarMenuButton asChild className="text-wrap text-ellipsis">
+                  <MenuItem item={classroom} />
+                </SidebarMenuButton>
+                <SidebarMenuSub>
+                  {classroom.lectures?.map((lecture, index) => (
+                    <Link
+                      key={index}
+                      href={`/home/classroom/${classroom.id}/lecture/${lecture.id}`}
+                    >
+                      <MenuItemSub key={index} item={lecture} />
+                    </Link>
+                  ))}
+                </SidebarMenuSub>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
   );
 }
