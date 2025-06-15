@@ -1,4 +1,5 @@
 import {
+  ADD_STUDENTS_IN_CLASSROOM_MUTATION,
   CREATE_CLASSROOM_MUTATION,
   CREATE_INVITE_LINK_MUTATION,
 } from '@/garphql/instructor/mutation/classrooms';
@@ -32,7 +33,7 @@ export const useClassrooms = (role?: 'STUDENT' | 'TEACHER') => {
     if (userRole === 'STUDENT') {
       return {
         query: GET_ALL_CLASSROOMS_BY_STUDENT_ID,
-        variables: { studentId: user?.username ?? '' },
+        variables: { studentId: user?.id ?? '' },
       };
     }
     return {
@@ -157,6 +158,33 @@ export const useClassrooms = (role?: 'STUDENT' | 'TEACHER') => {
     return currentClassroom?.inviteLink;
   }, [currentClassroom]);
 
+  const [
+    addStudentToClassroom,
+    { loading: addStudentToClassroomLoading, error: addStudentToClassroomError },
+  ] = useMutation(ADD_STUDENTS_IN_CLASSROOM_MUTATION, {
+    onCompleted: () => {
+      toast.success('Student added to classroom successfully');
+      dispatch(setClassroomLectures({ data: rawData?.getClassroomsByInstructorId }));
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const handleAddStudentToClassroom = async (studentIds: string[]) => {
+    const classroom = await addStudentToClassroom({
+      variables: { classroomId: currentClassroom?.id ?? '', studentIds },
+    });
+
+    if (classroom.data?.addStudentsInClassRoom) {
+      const newClassroom = classroom.data.addStudentsInClassRoom;
+      const allClassrooms = classroomLectures?.data?.map((classroom: any) =>
+        classroom.id === newClassroom.id ? newClassroom : classroom,
+      );
+      dispatch(setClassroomLectures({ data: allClassrooms }));
+    }
+  };
+
   return {
     // Query related
     data,
@@ -164,6 +192,7 @@ export const useClassrooms = (role?: 'STUDENT' | 'TEACHER') => {
     error: queryError,
     refetch,
     inviteLink,
+
     // Mutation related
     handleCreateClassroom,
     createLoading: mutationLoading,
@@ -178,5 +207,8 @@ export const useClassrooms = (role?: 'STUDENT' | 'TEACHER') => {
     handleJoinClassroom,
     joinClassroomLoading,
     joinClassroomError,
+    handleAddStudentToClassroom,
+    addStudentToClassroomLoading,
+    addStudentToClassroomError,
   };
 };

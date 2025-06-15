@@ -32,3 +32,21 @@ export const CREATE_INVITE_LINK_MUTATION = gql`
     }
   }
 `;
+
+export const ADD_STUDENTS_IN_CLASSROOM_MUTATION = gql`
+  mutation AddStudentsInClassroom($studentIds: [String!]!, $classroomId: String!) {
+    addStudentsInClassRoom(studentIds: $studentIds, classroomId: $classroomId) {
+      id
+      description
+      lectures
+      clientType
+      classroomName
+      instructorIds
+      inviteLink
+      inviteLinkExpiry
+      organizationId
+      classroomCode
+      studentIds
+    }
+  }
+`;

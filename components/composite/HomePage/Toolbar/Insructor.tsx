@@ -1,6 +1,6 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import { Book, Copy, Menu, School, Share } from 'lucide-react';
+import { Book, Copy, Menu, School, Share, Users } from 'lucide-react';
 import z from 'zod';
 import { useMemo, useState } from 'react';
 import AddNewLecture from '../Forms/Instructor/AddNewLecture';
@@ -13,17 +13,18 @@ import { addClassRoomFormSchema } from '@/models/add-new-classroom';
 
 import { useClassrooms } from '@/hooks/useClassrooms';
 import { useLecture } from '@/hooks/useLecture';
-import { RootState } from '@/store';
-import { useSelector } from 'react-redux';
+
 import LectureInvite from '../Forms/Instructor/ClassroomInvite';
 import { toast } from 'sonner';
-import { Badge } from '@/components/ui/badge';
+
 import ToolbarCommons from './ToolbarCommons';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import MoreMenu from '../Forms/Instructor/MoreMenu';
+import ManageStudents from '../Forms/Instructor/ManageStudents';
 
 export default function InstructorToolbar() {
-  const [isModalOpen, setIsModalOpen] = useState<'lecture' | 'classroom' | 'invite' | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<
+    'lecture' | 'classroom' | 'invite' | 'manageStudents' | null
+  >(null);
   const { user } = useAuth();
 
   const {
@@ -84,6 +85,8 @@ export default function InstructorToolbar() {
             error={inviteLinkError || undefined}
           />
         );
+      case 'manageStudents':
+        return <ManageStudents classroomId={classroomId as string} />;
     }
     return null;
   }, [isModalOpen]);
@@ -143,18 +146,28 @@ export default function InstructorToolbar() {
                   <Share /> Create Classroom Invite
                 </Button>
               )}
+              <Popover>
+                <PopoverTrigger asChild>
+                 {currentClassroom && <Button variant="outline">
+                    <Menu />
+                  </Button>}
+                </PopoverTrigger>
+                <PopoverContent className="w-56 p-2" asChild>
+                  <div className="flex flex-col gap-2">
+                    <Button
+                      variant="ghost"
+                      className="w-full"
+                      onClick={() => setIsModalOpen('manageStudents')}
+                    >
+                      <Users /> Manage Students
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
           </DialogTrigger>
           {isModalOpen && dialogContent}
         </Dialog>
-        <Popover>
-          <PopoverTrigger>
-            <Button variant="outline">
-              <Menu />
-            </Button>
-          </PopoverTrigger>
-          <MoreMenu />
-        </Popover>
       </div>
     </div>
   );

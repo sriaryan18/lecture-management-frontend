@@ -17,3 +17,17 @@ export const GET_ALL_CLASSROOMS_BY_INSTRUCTOR_ID = gql`
     }
   }
 `;
+
+export const GET_CLASSROOM_WITH_STUDENTS_BY_CLASSROOM_ID = gql`
+  query GetClassroomById($classroomId: String!) {
+    getClassroomById(classroomId: $classroomId) {
+      students {
+        id
+        username
+        firstName
+        lastName
+        email
+      }
+    }
+  }
+`;
