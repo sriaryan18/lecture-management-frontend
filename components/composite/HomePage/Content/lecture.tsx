@@ -68,9 +68,9 @@ export default function Lecture() {
   // If showMyNotes is false, show the notes of the instructor
   const notesToShow = useMemo(() => {
     if (showMyNotes) {
-      return notesData?.getStudentNotes?.notes ?? '';
+      return notesData?.getStudentNotes?.notes;
     }
-    return data?.getLectureById?.notes ?? '';
+    return data?.getLectureById?.notes;
   }, [showMyNotes, notesData, data?.getLectureById.notes]);
 
   const isNotesEditable = useMemo(() => {
@@ -194,8 +194,8 @@ const NotesWithWrapper = ({
   onChange: (notes: string) => void;
 }) => {
   return (
-    <div className="flex flex-col gap-4 w-full flex-grow">
-      <div className="flex flex-row gap-2 items-center justify-center self-end mr-4">
+    <div className="flex flex-col  w-full flex-grow ">
+      <div className="flex flex-row gap-2 mt-2 mb-2  items-center justify-center self-end mr-4">
         <Switch checked={isEditable} onCheckedChange={toggleNotesContent} className="bg-blue-500" />
         <Label className="flex flex-row gap-2 items-center justify-center">My Notes</Label>
         <Button

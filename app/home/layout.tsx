@@ -19,12 +19,12 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
     if (role === 'STUDENT') return <StudentToolbar />;
   }, [role]);
   return (
-    <div className=" flex flex-col ">
+    <div className=" flex flex-col space-x-2">
       <Header />
       <SidebarProvider>
         <ClassroomsLectures />
-        <div className=" w-full flex-grow flex flex-col ">
-          <div className="flex flex-col">
+        <div className=" w-full flex-grow flex flex-col">
+          <div className="flex flex-col overflow-y-auto w-full border-b border-gray-200 ">
             <div>{Toolbar}</div>
           </div>
           {children}

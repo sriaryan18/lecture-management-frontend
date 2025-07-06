@@ -121,7 +121,11 @@ export default function Editor({
   isEditable,
   onChange,
   initialState,
-}: Readonly<{ isEditable: boolean; onChange: (str: string) => void; initialState: string }>) {
+}: Readonly<{
+  isEditable: boolean;
+  onChange: (str: string) => void;
+  initialState: string | null;
+}>) {
   const editorConfig = {
     html: {
       export: exportMap,
@@ -146,7 +150,7 @@ export default function Editor({
     <LexicalComposer initialConfig={editorConfig}>
       <div className="editor-container h-full w-full">
         <ToolbarPlugin />
-    
+
         <div className="editor-inner h-full w-full ">
           <RichTextPlugin
             contentEditable={

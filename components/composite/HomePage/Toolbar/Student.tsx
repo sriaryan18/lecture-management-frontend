@@ -27,9 +27,7 @@ export default function StudentToolbar() {
   }, [isModalOpen]);
 
   return (
-    <div
-      className={`flex flex-row pl-2 shadow-lg  items-center  border-b border-gray-200  justify-between`}
-    >
+    <div className={`flex flex-row pl-2 shadow-lg  items-center   justify-between`}>
       {currentClassroom ? (
         <ToolbarCommons>
           <ToolbarCommons.ClassroomInfo

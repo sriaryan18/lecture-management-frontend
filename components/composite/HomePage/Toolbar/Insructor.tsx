@@ -20,12 +20,14 @@ import { toast } from 'sonner';
 import ToolbarCommons from './ToolbarCommons';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import ManageStudents from '../Forms/Instructor/ManageStudents';
+import usePermissionsTsx from '@/hooks/permissions/usePermissionsTsx';
 
 export default function InstructorToolbar() {
   const [isModalOpen, setIsModalOpen] = useState<
     'lecture' | 'classroom' | 'invite' | 'manageStudents' | null
   >(null);
   const { user } = useAuth();
+  const P = usePermissionsTsx();
 
   const {
     handleCreateClassroom,
@@ -95,15 +97,13 @@ export default function InstructorToolbar() {
     const link = currentClassroom?.inviteLink;
     const expiry = currentClassroom?.inviteLinkExpiry;
     if (link && expiry && new Date(expiry) > new Date()) {
-      return { link, expiry };
+      return { link, expiry } as { link: string; expiry: string };
     }
     return null;
   }, [currentClassroom]);
 
   return (
-    <div
-      className={`flex flex-row pl-2 shadow-lg  items-center  border-b border-gray-200  justify-between`}
-    >
+    <div className={`flex flex-row pl-2 shadow-lg  items-center   justify-between`}>
       {currentClassroom ? (
         <ToolbarCommons>
           <ToolbarCommons.ClassroomInfo
@@ -118,39 +118,22 @@ export default function InstructorToolbar() {
       <div className="flex flex-row gap-2 justify-center  items-end m-2 ">
         <Dialog modal={true} onOpenChange={(open) => !open && setIsModalOpen(null)}>
           <DialogTrigger asChild>
-            <div className="flex flex-row gap-2">
-              {inviteLink?.link && (
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    navigator.clipboard.writeText(inviteLink.link);
-                    toast.success('Invite link copied to clipboard');
-                  }}
-                  className=""
-                >
-                  <Copy /> Copy Invite Link
-                </Button>
-              )}
-              <Button onClick={() => setIsModalOpen('classroom')} className="bg-red-500 text-white">
-                <School /> Add Classroom
-              </Button>
-              <Button onClick={() => setIsModalOpen('lecture')} className="bg-green-500 text-white">
-                <Book /> Add Lecture
-              </Button>
-              {!inviteLink && (
-                <Button
-                  onClick={() => setIsModalOpen('invite')}
-                  className="bg-blue-500 text-white"
-                  disabled={true}
-                >
-                  <Share /> Create Classroom Invite
-                </Button>
-              )}
+            <div className="flex flex-row gap-2 ">
+              <div className="space-x-2">
+                <P.If condition={!!inviteLink}>
+                  <InviteLink inviteLink={inviteLink} />
+                </P.If>
+                <AddClassroom setIsModalOpen={setIsModalOpen} />
+                <AddLecture setIsModalOpen={setIsModalOpen} />
+              </div>
+              {!inviteLink && <CreateClassroomInvite setIsModalOpen={setIsModalOpen} />}
               <Popover>
                 <PopoverTrigger asChild>
-                 {currentClassroom && <Button variant="outline">
-                    <Menu />
-                  </Button>}
+                  {currentClassroom && (
+                    <Button variant="outline">
+                      <Menu />
+                    </Button>
+                  )}
                 </PopoverTrigger>
                 <PopoverContent className="w-56 p-2" asChild>
                   <div className="flex flex-col gap-2">
@@ -172,3 +155,52 @@ export default function InstructorToolbar() {
     </div>
   );
 }
+
+const InviteLink = ({ inviteLink }: { inviteLink: { link: string; expiry: string } | null }) => {
+  if (!inviteLink) return null;
+
+  return (
+    <Button
+      variant="outline"
+      onClick={() => {
+        navigator.clipboard.writeText(inviteLink.link);
+        toast.success('Invite link copied to clipboard');
+      }}
+      className=""
+    >
+      <Copy /> Copy Invite Link
+    </Button>
+  );
+};
+
+const AddClassroom = ({
+  setIsModalOpen,
+}: {
+  setIsModalOpen: (modal: 'classroom' | null) => void;
+}) => (
+  <Button onClick={() => setIsModalOpen('classroom')} className="bg-red-500 text-white">
+    <School /> Add Classroom
+  </Button>
+);
+
+const AddLecture = ({ setIsModalOpen }: { setIsModalOpen: (modal: 'lecture' | null) => void }) => (
+  <Button onClick={() => setIsModalOpen('lecture')} className="bg-green-500 text-white">
+    <Book /> Add Lecture
+  </Button>
+);
+
+const CreateClassroomInvite = ({
+  setIsModalOpen,
+}: {
+  setIsModalOpen: (modal: 'invite' | null) => void;
+}) => {
+  return (
+    <Button
+      onClick={() => setIsModalOpen('invite')}
+      className="bg-blue-500 text-white"
+      disabled={true}
+    >
+      <Share /> Create Classroom Invite
+    </Button>
+  );
+};

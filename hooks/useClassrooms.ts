@@ -18,7 +18,7 @@ import { RootState } from '@/store';
 import { useParams } from 'next/navigation';
 import { JOIN_CLASSROOM_BY_CODE } from '@/garphql/students/mutation/classroom';
 
-export const useClassrooms = (role?: 'STUDENT' | 'TEACHER') => {
+export const useClassrooms = (role?: 'STUDENT' | 'TEACHER', refetch?: any) => {
   const { user } = useAuth();
   const dispatch = useDispatch();
   const userRole = role || (user?.role as 'STUDENT' | 'TEACHER');
@@ -29,45 +29,6 @@ export const useClassrooms = (role?: 'STUDENT' | 'TEACHER') => {
   }, [classroomLectures, classroomId]);
 
   // Query logic
-  const getQuery = () => {
-    if (userRole === 'STUDENT') {
-      return {
-        query: GET_ALL_CLASSROOMS_BY_STUDENT_ID,
-        variables: { studentId: user?.id ?? '' },
-      };
-    }
-    return {
-      query: GET_ALL_CLASSROOMS_BY_INSTRUCTOR_ID,
-      variables: { instructorID: user?.id ?? '' },
-    };
-  };
-
-  const {
-    data: rawData,
-    loading: queryLoading,
-    error: queryError,
-    refetch,
-  } = useQuery(getQuery().query, {
-    variables: getQuery().variables,
-  });
-
-  // Transform data to return directly without query name nesting
-  const data = useMemo(() => {
-    if (userRole === 'STUDENT') {
-      return rawData?.getClassroomsByStudentIds ?? [];
-    }
-    return rawData?.getClassroomsByInstructorId ?? [];
-  }, [rawData, userRole]);
-
-  useEffect(() => {
-    if (rawData) {
-      if (userRole === 'TEACHER') {
-        dispatch(setClassroomLectures({ data: rawData.getClassroomsByInstructorId }));
-      } else {
-        dispatch(setClassroomLectures({ data: rawData.getClassroomsByStudentIds }));
-      }
-    }
-  }, [rawData, dispatch, userRole]);
 
   // Mutation logic
   const [createClassroom, { loading: mutationLoading, error: mutationError }] = useMutation(
@@ -186,13 +147,6 @@ export const useClassrooms = (role?: 'STUDENT' | 'TEACHER') => {
   };
 
   return {
-    // Query related
-    data,
-    loading: queryLoading,
-    error: queryError,
-    refetch,
-    inviteLink,
-
     // Mutation related
     handleCreateClassroom,
     createLoading: mutationLoading,

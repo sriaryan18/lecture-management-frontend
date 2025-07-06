@@ -14,7 +14,7 @@ ToolbarCommons.ClassroomInfo = function ClassroomInfo({
   classCode,
 }: ClassroomInfoProps) {
   return (
-    <div className="grid grid-cols-2 gap-2 ">
+    <div className=" grid-cols-2 gap-2 hidden  lg:grid">
       <span className="text-sm max-w-48">
         Class Name : <Badge className="bg-slate-100 text-gray-800">{className}</Badge>
       </span>
