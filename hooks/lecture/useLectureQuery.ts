@@ -34,6 +34,6 @@ export const useLectureQuery = (
     loading: queryLoading,
     error: queryError,
     refetchLecture,
-    studentNotes: studentNotes?.getStudentNotesByLectureId || null,
+    studentNotes: studentNotes?.getStudentNotes?.notes || "",
   };
 };

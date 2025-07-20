@@ -19,8 +19,26 @@ export const CREATE_LECTURE_MUTATION = gql`
       lectureName: $lectureName
       lectureDescription: $lectureDescription
     ) {
-      id,
-      classroomId,
+      id
+      classroomId
+    }
+  }
+`;
+
+export const ADD_OR_UPDATE_LECTURE_NOTES_MUTATION = gql`
+  mutation addOrUpdateNotes(
+    $lectureId: String!
+    $classroomId: String!
+    $instructorId: String!
+    $notes: String!
+  ) {
+    addOrUpdateNotes(
+      lectureId: $lectureId
+      classroomId: $classroomId
+      instructorId: $instructorId
+      notes: $notes
+    ) {
+      id
     }
   }
 `;

@@ -1,12 +1,12 @@
 import Editor from '@/components/ui/rich-text-editor/editor';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Notes({
   initialValue,
   isEditable,
   onChange,
 }: Readonly<{ initialValue: string; isEditable: boolean; onChange?: (notes: string) => void }>) {
-  const [notes, setNotes] = useState(initialValue );
+  const [notes, setNotes] = useState(initialValue);
 
   const onchangeNotes = (notes: string) => {
     setNotes(notes);

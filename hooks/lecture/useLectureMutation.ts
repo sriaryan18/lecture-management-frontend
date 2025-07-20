@@ -1,5 +1,13 @@
-import { CREATE_LECTURE_MUTATION } from '@/garphql/instructor/mutation/lecture';
+import {
+  ADD_OR_UPDATE_LECTURE_NOTES_MUTATION,
+  CREATE_LECTURE_MUTATION,
+} from '@/garphql/instructor/mutation/lecture';
+import { UPDATE_STUDENT_NOTES } from '@/garphql/students/mutation/notes';
 import { addLectureFormSchema } from '@/models/add-new-lecture';
+import {
+  addOrUpdateNotesFormSchema,
+  addOrUpdateStudentNotesFormSchema,
+} from '@/models/add-or-update-notes';
 import { RootState } from '@/store';
 import { setClassroomLectures } from '@/store/slices/classroom-lecture-slice';
 import { useMutation } from '@apollo/client';
@@ -43,10 +51,50 @@ export const useLectureMutation = (refetchLecture: () => void) => {
     // refetchLecture();
   };
 
+  const [updateLectureNotes] = useMutation(ADD_OR_UPDATE_LECTURE_NOTES_MUTATION, {
+    onCompleted: () => {
+      toast.success('Lecture notes updated successfully');
+      refetchLecture();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const handleUpdateLectureNotes = async (data: z.infer<typeof addOrUpdateNotesFormSchema>) => {
+    await updateLectureNotes({
+      variables: {
+        ...data,
+      },
+    });
+  };
+
+  const [saveStudentNotes, { loading: saveNotesLoading }] = useMutation(UPDATE_STUDENT_NOTES, {
+    onCompleted: () => {
+      toast.success('Notes saved successfully');
+      refetchLecture();
+    },
+    onError: () => {
+      toast.error('Failed to save notes');
+    },
+  });
+
+  const handleSaveStudentNotes = async (
+    data: z.infer<typeof addOrUpdateStudentNotesFormSchema>,
+  ) => {
+    await saveStudentNotes({
+      variables: {
+        ...data,
+      },
+    });
+  };
   return {
     createLecture,
     createLoading: mutationLoading,
     createError: mutationError,
     handleCreateLecture,
+    handleUpdateLectureNotes,
+    handleSaveStudentNotes,
+    saveNotesLoading,
   };
 };
