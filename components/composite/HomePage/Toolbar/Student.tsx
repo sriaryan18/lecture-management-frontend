@@ -1,4 +1,4 @@
-import { useClassrooms } from '@/hooks/useClassrooms';
+import { useClassrooms } from '@/hooks/classrooms/useClassroomsMutation';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Copy } from 'lucide-react';

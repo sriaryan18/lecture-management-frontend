@@ -8,6 +8,17 @@ export const useLMSQuery = <T = Record<string, unknown>>(
   scope: T,
   options: { skip?: boolean; enabled?: boolean } = {},
 ) => {
+  // To handle the case where the query object is not provided ( due to permission check )
+  if (!queryObject) {
+    // console.error('Query object is required');
+    return {
+      data: null,
+      loading: false,
+      error: null,
+      refetch: () => {},
+      hasData: false,
+    };
+  }
   const { skip = false, enabled = true } = options;
 
   const adapterChainExecutor = useAdapters();
@@ -47,8 +58,10 @@ export const useLMSQuery = <T = Record<string, unknown>>(
 
   const processedData = useMemo(() => {
     if (!data || loading) return data;
-
-    return adapterChainExecutor.execute(queryObject.postQueryAdaptorChain ?? [], data);
+    if (queryObject.postQueryAdaptorChain?.length) {
+      return adapterChainExecutor.execute(queryObject.postQueryAdaptorChain ?? [], data);
+    }
+    return data;
   }, [data]);
 
   const refetch = useCallback(

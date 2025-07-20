@@ -3,23 +3,22 @@ import { Button } from '@/components/ui/button';
 import { Book, Copy, Menu, School, Share, Users } from 'lucide-react';
 import z from 'zod';
 import { useMemo, useState } from 'react';
-import AddNewLecture from '../Forms/Instructor/AddNewLecture';
+import AddNewLecture from './AddNewLecture';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { useAuth } from '@/hooks/store/useAuth';
 import { addLectureFormSchema } from '@/models/add-new-lecture';
 import { useParams } from 'next/navigation';
-import AddNewClassroom from '../Forms/Instructor/AddNewClassroom';
+import AddNewClassroom from './AddNewClassroom';
 import { addClassRoomFormSchema } from '@/models/add-new-classroom';
 
-import { useClassrooms } from '@/hooks/useClassrooms';
-import { useLecture } from '@/hooks/useLecture';
+import { useLectureQuery } from '@/hooks/lecture/useLectureQuery';
 
-import LectureInvite from '../Forms/Instructor/ClassroomInvite';
+import LectureInvite from './ClassroomInvite';
 import { toast } from 'sonner';
 
 import ToolbarCommons from './ToolbarCommons';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import ManageStudents from '../Forms/Instructor/ManageStudents';
+import ManageStudents from './ManageStudents';
 import usePermissionsTsx from '@/hooks/permissions/usePermissionsTsx';
 
 export default function InstructorToolbar() {
@@ -30,20 +29,10 @@ export default function InstructorToolbar() {
   const P = usePermissionsTsx();
 
   const {
-    handleCreateClassroom,
-    createLoading: classroomLoading,
-    createError: classroomError,
-    handleCreateInvite,
-    inviteLinkLoading,
-    inviteLinkError,
-    currentClassroom,
-    allClassroomsMetadata,
-  } = useClassrooms();
-  const {
     handleCreateLecture,
     createLoading: lectureLoading,
     createError: lectureError,
-  } = useLecture();
+  } = useLectureQuery();
   const { classroomId } = useParams();
 
   const handleSaveLecture = (data: z.infer<typeof addLectureFormSchema>) => {
@@ -118,15 +107,15 @@ export default function InstructorToolbar() {
       <div className="flex flex-row gap-2 justify-center  items-end m-2 ">
         <Dialog modal={true} onOpenChange={(open) => !open && setIsModalOpen(null)}>
           <DialogTrigger asChild>
-            <div className="flex flex-row gap-2 ">
+            <div className="flex flex-row gap-2  flex-nowrap">
               <div className="space-x-2">
                 <P.If condition={!!inviteLink}>
                   <InviteLink inviteLink={inviteLink} />
                 </P.If>
-                <AddClassroom setIsModalOpen={setIsModalOpen} />
+                {/* <AddClassroom setIsModalOpen={setIsModalOpen} /> */}
                 <AddLecture setIsModalOpen={setIsModalOpen} />
+                {!inviteLink && <CreateClassroomInvite setIsModalOpen={setIsModalOpen} />}
               </div>
-              {!inviteLink && <CreateClassroomInvite setIsModalOpen={setIsModalOpen} />}
               <Popover>
                 <PopoverTrigger asChild>
                   {currentClassroom && (
@@ -172,16 +161,6 @@ const InviteLink = ({ inviteLink }: { inviteLink: { link: string; expiry: string
     </Button>
   );
 };
-
-const AddClassroom = ({
-  setIsModalOpen,
-}: {
-  setIsModalOpen: (modal: 'classroom' | null) => void;
-}) => (
-  <Button onClick={() => setIsModalOpen('classroom')} className="bg-red-500 text-white">
-    <School /> Add Classroom
-  </Button>
-);
 
 const AddLecture = ({ setIsModalOpen }: { setIsModalOpen: (modal: 'lecture' | null) => void }) => (
   <Button onClick={() => setIsModalOpen('lecture')} className="bg-green-500 text-white">

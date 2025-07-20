@@ -1,8 +1,8 @@
 'use client';
 
 import { GET_LECTURE_BY_ID } from '@/garphql/students/queries/lectures';
-import { useMutation, useQuery } from '@apollo/client';
-import { useParams } from 'next/navigation';
+import { ApolloError, useMutation, useQuery } from '@apollo/client';
+
 import Pending from '@/app/home/classroom/[classroomId]/lecture/[lectureId]/pending';
 import Error from '@/app/home/classroom/[classroomId]/lecture/[lectureId]/error';
 import InfoCard from './info-card';
@@ -18,7 +18,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { PanelBottomOpen } from 'lucide-react';
-import { GET_STUDENT_NOTES } from '@/garphql/students/queries/notes';
 import { UPDATE_STUDENT_NOTES } from '@/garphql/students/mutation/notes';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -27,69 +26,63 @@ import { toast } from 'sonner';
 
 export type Section = 'info' | 'notes' | 'tests';
 
-export default function Lecture() {
-  const { lectureId, classroomId } = useParams();
-
+export default function Lecture({
+  customerType,
+  lectureData,
+  lectureLoading,
+  lectureError,
+  studentNotes,
+}: {
+  customerType: string;
+  lectureData: any;
+  lectureLoading: boolean;
+  lectureError: ApolloError;
+  studentNotes: any;
+}) {
   const [section, setSection] = useState<Section>('info');
   const [showMyNotes, setShowMyNotes] = useState(false);
   const [myNotes, setMyNotes] = useState('');
 
-  const { user } = useAuth();
-  const customerType = user?.customerType ?? 'student';
-  const { data, loading, error } = useQuery(GET_LECTURE_BY_ID, {
-    variables: {
-      lectureId: lectureId,
-    },
-  });
-
-  const { data: notesData } = useQuery(GET_STUDENT_NOTES, {
-    variables: {
-      studentId: user?.id,
-      lectureId: lectureId,
-      classroomId: classroomId,
-    },
-  });
-
-  const [saveNotes, { loading: saveNotesLoading }] = useMutation(UPDATE_STUDENT_NOTES, {
-    variables: {
-      studentId: user?.id,
-      lectureId: lectureId,
-      classroomId: classroomId,
-      notes: myNotes,
-    },
-    onCompleted: () => {
-      toast.success('Notes saved successfully');
-    },
-    onError: () => {
-      toast.error('Failed to save notes');
-    },
-  });
+  // const [saveNotes, { loading: saveNotesLoading }] = useMutation(UPDATE_STUDENT_NOTES, {
+  //   variables: {
+  //     studentId: user?.id,
+  //     lectureId: lectureId,
+  //     classroomId: classroomId,
+  //     notes: myNotes,
+  //   },
+  //   onCompleted: () => {
+  //     toast.success('Notes saved successfully');
+  //   },
+  //   onError: () => {
+  //     toast.error('Failed to save notes');
+  //   },
+  // });
   // If showMyNotes is true, show the notes of the student
   // If showMyNotes is false, show the notes of the instructor
   const notesToShow = useMemo(() => {
     if (showMyNotes) {
-      return notesData?.getStudentNotes?.notes;
+      return studentNotes?.notes;
     }
-    return data?.getLectureById?.notes;
-  }, [showMyNotes, notesData, data?.getLectureById.notes]);
+    return lectureData?.notes;
+  }, [showMyNotes, studentNotes?.notes, lectureData?.notes]);
 
   const isNotesEditable = useMemo(() => {
     return showMyNotes && customerType === 'student';
   }, [showMyNotes, customerType]);
 
-  useEffect(() => {
-    setMyNotes(notesData?.getStudentNotes?.notes ?? '');
-  }, [notesData]);
+  // useEffect(() => {
+  //   setMyNotes(notesData?.getStudentNotes?.notes ?? '');
+  // }, [notesData]);
 
-  if (loading) {
+  if (lectureLoading) {
     return <div>Loading...</div>;
   }
 
-  if (error) {
-    return <Error error={error} />;
+  if (lectureError) {
+    return <Error error={lectureError} />;
   }
 
-  if (data?.getLectureById.status === 'pending') {
+  if (lectureData?.status === 'pending') {
     return <Pending />;
   }
 
@@ -102,9 +95,9 @@ export default function Lecture() {
       case 'info':
         return (
           <InfoCard
-            instructorId={data?.getLectureById.instructorId}
-            topics={data?.getLectureById.topics}
-            createdAt={data?.getLectureById.createdAt}
+            instructorId={lectureData?.instructorId}
+            topics={lectureData?.topics}
+            createdAt={lectureData?.createdAt}
             gotoSection={gotoSection}
           />
         );
@@ -114,8 +107,8 @@ export default function Lecture() {
             notes={notesToShow}
             isEditable={isNotesEditable}
             toggleNotesContent={() => setShowMyNotes(!showMyNotes)}
-            saveNotes={saveNotes}
-            isLoading={saveNotesLoading}
+            saveNotes={() => {}}
+            isLoading={false}
             onChange={(notes) => setMyNotes(notes)}
           />
         );

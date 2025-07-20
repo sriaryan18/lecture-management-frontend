@@ -24,13 +24,9 @@ export default function AddNewClassroom({
   error: ApolloError;
 }>) {
   return (
-    <DialogContent className="max-w-md">
-      <DialogHeader>
-        <DialogTitle>Add New Classroom</DialogTitle>
-        <DialogDescription>Add a new classroom to the course</DialogDescription>
-      </DialogHeader>
+    <>
       <AddClassroomForm onSubmit={onSubmit} loading={loading} error={error} />
-    </DialogContent>
+    </>
   );
 }
 

@@ -11,42 +11,20 @@ import {
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
 
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import Link from 'next/link';
-import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { HomeIcon } from 'lucide-react';
-import { useClassrooms } from '@/hooks/useClassrooms';
 import { useAuth } from '@/hooks/store/useAuth';
-import { setClassroomLectures } from '@/store/slices/classroom-lecture-slice';
-import { useLMSQuery } from '@/hooks/useLMSQuery';
-import { roleSpecificConfigs } from '@/utils/roleSpecificConfigs';
+import { useClassroomQuery } from '@/hooks/classrooms/useClassroomQuery';
+import { RootState } from '@/store';
 
 export default function ClassroomsLectures({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { user } = useAuth();
-  const { classroomLectures } = useClassrooms(user?.role as 'STUDENT' | 'TEACHER');
-  const userRole = user?.role;
-  const dispatch = useDispatch();
+  const { role } = useAuth();
 
-  const roleSpecificConfig = useMemo(() => {
-    if (userRole === 'STUDENT') {
-      return roleSpecificConfigs.STUDENT.SIDEBAR;
-    }
-    return roleSpecificConfigs.INSTRUCTOR.SIDEBAR;
-  }, [userRole]);
-  const context = useMemo(() => {
-    return {
-      componentData: classroomLectures,
-      auth: user,
-    };
-  }, [classroomLectures, user]);
+  useClassroomQuery(role as 'STUDENT' | 'TEACHER');
 
-  const { data } = useLMSQuery(roleSpecificConfig.query.getAllClassrooms, context);
-
-  useEffect(() => {
-    if (data) {
-      dispatch(setClassroomLectures(data));
-    }
-  }, [data, dispatch]);
+  const { classroomLectures } = useSelector((state: RootState) => state.classroomLecture);
 
   const classRoomsAndLectures = useMemo(() => {
     return classroomLectures?.data?.map((classroom: any, index: number) => ({

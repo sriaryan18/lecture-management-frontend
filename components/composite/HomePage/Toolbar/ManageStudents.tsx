@@ -9,8 +9,16 @@ import { CheckIcon, TrashIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useMemo, useState } from 'react';
 import { BaseInput } from '@/components/BaseComponents/Input';
-import { useClassrooms } from '@/hooks/useClassrooms';
-export default function ManageStudents({ classroomId }: { classroomId: string }) {
+// import { useClassroomsMutation } from '@/hooks/classrooms/useClassroomsMutation';
+
+// import z from 'zod';
+export default function ManageStudents({
+  classroomId,
+  handleAddStudentToClassroom,
+}: {
+  classroomId: string;
+  handleAddStudentToClassroom: (data: any) => Promise<void>;
+}) {
   const {
     data: classroomWithStudents,
     loading: classroomWithStudentsLoading,
@@ -18,13 +26,14 @@ export default function ManageStudents({ classroomId }: { classroomId: string })
   } = useQuery(GET_CLASSROOM_WITH_STUDENTS_BY_CLASSROOM_ID, {
     variables: { classroomId },
   });
-  const { handleAddStudentToClassroom } = useClassrooms();
+  // const { handleAddStudentToClassroom } = useClassroomsMutation();
   const [isNewStudentAdded, setIsNewStudentAdded] = useState(false);
   const newStudent = {
     id: '',
     firstName: '',
     lastName: '',
     email: '',
+    username: '',
     isNew: true,
   };
 
@@ -43,21 +52,17 @@ export default function ManageStudents({ classroomId }: { classroomId: string })
   };
 
   return (
-    <DialogContent className="max-w-4xl">
-      <DialogHeader>
-        <DialogTitle>Students</DialogTitle>
-      </DialogHeader>
+    <>
       <StudentList
         students={data}
         classroomWithStudentsLoading={classroomWithStudentsLoading}
         handleAddStudent={handleAddStudent}
       />
-      <DialogFooter>
-        <Button variant="outline" onClick={() => setIsNewStudentAdded(true)}>
-          Add Student
-        </Button>
-      </DialogFooter>
-    </DialogContent>
+
+      <Button variant="outline" onClick={() => setIsNewStudentAdded(true)}>
+        Add Student
+      </Button>
+    </>
   );
 }
 
@@ -76,7 +81,7 @@ function StudentList({
     firstName: student?.firstName,
     lastName: student?.lastName,
     email: student?.email,
-    isNew: student?.isNew,
+    isNew: student?.isNew || false,
   }));
   const columns: ColumnDef<Partial<User['user'] & { isNew?: boolean }>>[] = [
     {

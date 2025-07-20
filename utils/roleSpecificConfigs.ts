@@ -1,6 +1,7 @@
 import { GET_ALL_CLASSROOMS_BY_INSTRUCTOR_ID } from '@/garphql/instructor/queries/classrooms';
 import { GET_ALL_CLASSROOMS_BY_STUDENT_ID } from '@/garphql/students/queries/classrooms';
 import { GET_LECTURE_BY_ID } from '@/garphql/students/queries/lectures';
+import { GET_STUDENT_NOTES } from '@/garphql/students/queries/notes';
 import { DocumentNode } from 'graphql';
 
 export interface IQueryConfig {
@@ -46,6 +47,7 @@ export interface IPermissionsAndAccess {
 
     queries: {
       getLecturesById?: IQueryConfig;
+      getStudentNotesByLectureId?: IQueryConfig;
       // getNotesByLectureId?: IQueryConfig;
       // getTestsByLectureId?: IQueryConfig;
       // getStudentNotesByLectureId?: IQueryConfig;
@@ -84,22 +86,46 @@ export const roleSpecificConfigs: IRoleSpecificConfig = {
       permissions: {
         canOpenNotes: true,
         canOpenTests: true,
-      },
-      queries: {
-        getLecturesById: {
-          name: 'GET_LECTURE_BY_ID',
-          variables: (context: { lectureId: string }) => ({
-            lectureId: context.lectureId,
-          }),
-          postQueryAdaptorChain: [],
-          preQueryAdaptorChain: [],
-        },
-      },
-      sections: {
         canViewLectureInfo: true,
         canViewLectureNotes: true,
         canViewLectureTests: true,
       },
+      queries: {
+        getLecturesById: {
+          name: GET_LECTURE_BY_ID,
+          variables: (context: { lectureId: string }) => ({
+            lectureId: context.lectureId,
+          }),
+          postQueryAdaptorChain: [
+            {
+              name: 'resolveValues',
+              dataTemplate: { data: 'getLectureById' },
+            },
+          ],
+          preQueryAdaptorChain: [],
+        },
+
+        getStudentNotesByLectureId: {
+          name: GET_STUDENT_NOTES,
+          variables: (context: { lectureId: string; classroomId: string; studentId: string }) => ({
+            lectureId: context.lectureId,
+            classroomId: context.classroomId,
+            studentId: context.studentId,
+          }),
+          postQueryAdaptorChain: [
+            {
+              name: 'resolveValues',
+              dataTemplate: { data: 'getStudentNotesByLectureId' },
+            },
+          ],
+          preQueryAdaptorChain: [],
+        },
+      },
+      // sections: {
+      //   canViewLectureInfo: true,
+      //   canViewLectureNotes: true,
+      //   canViewLectureTests: true,
+      // },
     },
     SIDEBAR: {
       query: {
@@ -143,10 +169,16 @@ export const roleSpecificConfigs: IRoleSpecificConfig = {
           variables: (context: { lectureId: string }) => ({
             lectureId: context.lectureId,
           }),
-          postQueryAdaptorChain: [],
+          postQueryAdaptorChain: [
+            {
+              name: 'resolveValues',
+              dataTemplate: { data: 'getLectureById' },
+            },
+          ],
           preQueryAdaptorChain: [],
         },
       },
+      // mutations: {}
     },
     SIDEBAR: {
       query: {

@@ -19,7 +19,8 @@ export const CREATE_LECTURE_MUTATION = gql`
       lectureName: $lectureName
       lectureDescription: $lectureDescription
     ) {
-      id
+      id,
+      classroomId,
     }
   }
 `;

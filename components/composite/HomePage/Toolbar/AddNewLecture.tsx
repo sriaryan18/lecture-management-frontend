@@ -38,20 +38,21 @@ export default function AddNewLecture({
     handleSaveLecture(data);
   };
   return (
-    <DialogContent className="max-w-md">
-      <DialogHeader>
-        <DialogTitle>Add New Lecture</DialogTitle>
-        <DialogDescription>Add a new lecture to the course</DialogDescription>
-      </DialogHeader>
-      <AddLectureForm
-        classroomId={classroomId}
-        instructorId={instructorId}
-        onSubmit={handleSubmit}
-        classrooms={classrooms}
-        loading={loading}
-        error={error}
-      />
-    </DialogContent>
+    <AddLectureForm
+      classroomId={classroomId}
+      instructorId={instructorId}
+      onSubmit={handleSubmit}
+      classrooms={classrooms}
+      loading={loading}
+      error={error}
+    />
+    // <DialogContent className="max-w-md">
+    //   <DialogHeader>
+    //     <DialogTitle>Add New Lecture</DialogTitle>
+    //     <DialogDescription>Add a new lecture to the course</DialogDescription>
+    //   </DialogHeader>
+
+    // </DialogContent>
   );
 }
 

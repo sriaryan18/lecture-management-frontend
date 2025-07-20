@@ -10,7 +10,7 @@ import { shareClassroomInviteSchema } from '@/models/share-classroom-invite';
 import { useMutation, useQuery } from '@apollo/client';
 import { z } from 'zod';
 import { toast } from 'sonner';
-import { useAuth } from './store/useAuth';
+import { useAuth } from '../store/useAuth';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useMemo } from 'react';
 import { setClassroomLectures } from '@/store/slices/classroom-lecture-slice';
@@ -18,7 +18,7 @@ import { RootState } from '@/store';
 import { useParams } from 'next/navigation';
 import { JOIN_CLASSROOM_BY_CODE } from '@/garphql/students/mutation/classroom';
 
-export const useClassrooms = (role?: 'STUDENT' | 'TEACHER', refetch?: any) => {
+export const useClassroomsMutation = (role?: 'STUDENT' | 'TEACHER' | 'ADMIN', refetch?: any) => {
   const { user } = useAuth();
   const dispatch = useDispatch();
   const userRole = role || (user?.role as 'STUDENT' | 'TEACHER');
@@ -34,8 +34,13 @@ export const useClassrooms = (role?: 'STUDENT' | 'TEACHER', refetch?: any) => {
   const [createClassroom, { loading: mutationLoading, error: mutationError }] = useMutation(
     CREATE_CLASSROOM_MUTATION,
     {
-      onCompleted: () => {
+      onCompleted: (data) => {
         toast.success('Classroom created successfully');
+        dispatch(
+          setClassroomLectures({
+            data: [...(classroomLectures?.data || []), data?.createClassroom],
+          }),
+        );
       },
       onError: (error) => {
         toast.error(error.message);
@@ -55,7 +60,7 @@ export const useClassrooms = (role?: 'STUDENT' | 'TEACHER', refetch?: any) => {
           organizationId: user?.organizationId ?? '',
         },
       });
-      refetch();
+      // refetch?.();
     }
   };
 
@@ -125,7 +130,7 @@ export const useClassrooms = (role?: 'STUDENT' | 'TEACHER', refetch?: any) => {
   ] = useMutation(ADD_STUDENTS_IN_CLASSROOM_MUTATION, {
     onCompleted: () => {
       toast.success('Student added to classroom successfully');
-      dispatch(setClassroomLectures({ data: rawData?.getClassroomsByInstructorId }));
+      // dispatch(setClassroomLectures({ data: rawData?.getClassroomsByInstructorId }));
     },
     onError: (error) => {
       toast.error(error.message);
